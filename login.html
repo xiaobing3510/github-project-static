@@ -30,28 +30,54 @@
                           <label class="form-control-label">账号</label>
                           <div class="input-group input-group-merge">
                             <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="bi bi-person"></i></span>
+                              <span class="input-group-text"
+                                ><i class="bi bi-person"></i
+                              ></span>
                             </div>
-                            <input name="username" type="text" class="form-control" id="input-email" placeholder="请输入账号" />
+                            <input
+                              name="username"
+                              type="text"
+                              class="form-control"
+                              id="input-email"
+                              placeholder="请输入账号"
+                            />
                           </div>
                         </div>
                         <div class="form-group mb-4">
-                          <div class="d-flex align-items-center justify-content-between">
+                          <div
+                            class="d-flex align-items-center justify-content-between"
+                          >
                             <div>
                               <label class="form-control-label">密码</label>
                             </div>
                             <div class="mb-2">
-                              <a href="javascript:;" class="small text-muted text-underline--dashed border-primary">忘记密码</a>
+                              <a
+                                href="javascript:;"
+                                class="small text-muted text-underline--dashed border-primary"
+                                >忘记密码</a
+                              >
                             </div>
                           </div>
                           <div class="input-group input-group-merge">
                             <div class="input-group-prepend">
-                              <span class="input-group-text"><i class="bi bi-key"></i></span>
+                              <span class="input-group-text"
+                                ><i class="bi bi-key"></i
+                              ></span>
                             </div>
-                            <input name="password" type="password" class="form-control" id="input-password" placeholder="请输入密码" />
+                            <input
+                              name="password"
+                              type="password"
+                              class="form-control"
+                              id="input-password"
+                              placeholder="请输入密码"
+                            />
                             <div class="input-group-append">
                               <span class="input-group-text">
-                                <a href="javascript:;" data-toggle="password-text" data-target="#input-password">
+                                <a
+                                  href="javascript:;"
+                                  data-toggle="password-text"
+                                  data-target="#input-password"
+                                >
                                   <i class="bi bi-eye-fill text-blue"></i>
                                 </a>
                               </span>
@@ -59,14 +85,27 @@
                           </div>
                         </div>
                         <div class="mt-4">
-                          <button id="btn-login" type="button" class="btn btn-sm btn-info btn-icon btn-blue rounded-pill">
+                          <button
+                            id="btn-login"
+                            type="button"
+                            class="btn btn-sm btn-info btn-icon btn-blue rounded-pill"
+                          >
                             <span class="btn-inner--text">登录</span>
-                            <span class="btn-inner--icon"><i class="bi bi-arrow-right"></i></span>
+                            <span class="btn-inner--icon"
+                              ><i class="bi bi-arrow-right"></i
+                            ></span>
                           </button>
                         </div>
                       </form>
                     </div>
-                    <div class="card-footer px-md-5"><small>没有注册？</small> <a href="./register.html" class="small font-weight-bold text-blue">创建账号</a></div>
+                    <div class="card-footer px-md-5">
+                      <small>没有注册？</small>
+                      <a
+                        href="./register.html"
+                        class="small font-weight-bold text-blue"
+                        >创建账号</a
+                      >
+                    </div>
                   </div>
                 </div>
               </div>
@@ -76,7 +115,10 @@
       </div>
     </div>
     <!-- toast -->
-    <div class="position-fixed top-0 start-50 pt-4" style="z-index: 999; transform: translateX(-50%)">
+    <div
+      class="position-fixed top-0 start-50 pt-4"
+      style="z-index: 999; transform: translateX(-50%)"
+    >
       <div id="myToast" class="toast bg-rgba">
         <div class="toast-body">提示消息</div>
       </div>
@@ -85,6 +127,28 @@
     <script src="./lib/form-serialize.js"></script>
     <script src="./lib/axios.js"></script>
     <script src="./js/common.js"></script>
-    <script></script>
+    <script>
+      document
+        .querySelector('#btn-login')
+        .addEventListener('click', async () => {
+          const data = serialize(document.querySelector('form'), { hash: true })
+          if (!data.username && !data.password) return tip('请完善表单')
+          if (data.username.length < 2 || data.username.length > 30)
+            return tip('用户名长度需在2-30字符')
+          if (data.password.length < 6 || data.password.length > 30)
+            return tip('密码长度需在6-30字符')
+          try {
+            const res = await axios({
+              method: 'POST',
+              url: 'login',
+              data,
+            })
+            sessionStorage.setItem('information',JSON.stringify(res.data))
+            location.href = './index.html'
+          } catch (err) {
+            tip(err.response.data.message)
+          }
+        })
+    </script>
   </body>
 </html>
