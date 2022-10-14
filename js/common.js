@@ -52,10 +52,16 @@ axios.interceptors.response.use(
   }
 )
 
-// 退出登录功能
+// 退出登录功能与渲染用户名
 const logout = document.getElementById('logout')
 if (logout)
   logout.addEventListener('click', () => {
     sessionStorage.removeItem('information')
     location.href = './login.html'
   })
+const username = document.querySelector('.mb-0.text-sm.font-weight-bold')
+if (username) {
+  username.innerHTML = JSON.parse(
+    sessionStorage.getItem('information')
+  ).username
+}
