@@ -128,6 +128,8 @@
     <script src="./lib/axios.js"></script>
     <script src="./js/common.js"></script>
     <script>
+      // 移除拦截器
+      axios.interceptors.request.eject(myInterceptor)
       document
         .querySelector('#btn-login')
         .addEventListener('click', async () => {
@@ -145,7 +147,7 @@
               data,
             })
             // 登录成功在本地保存登陆信息
-            sessionStorage.setItem('information',JSON.stringify(res.data))
+            sessionStorage.setItem('information', JSON.stringify(res.data))
             location.href = './index.html'
           } catch (err) {
             tip(err.response.data.message)

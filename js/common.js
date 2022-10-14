@@ -24,7 +24,7 @@ function tip(msg) {
 axios.defaults.baseURL = 'http://ajax-api.itheima.net'
 
 // 添加请求拦截器
-axios.interceptors.request.use(
+const myInterceptor = axios.interceptors.request.use(
   function (config) {
     // 每次都发送请求头
     config.headers.Authorization = JSON.parse(
