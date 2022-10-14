@@ -132,6 +132,7 @@
         .querySelector('#btn-login')
         .addEventListener('click', async () => {
           const data = serialize(document.querySelector('form'), { hash: true })
+          // 表单校验
           if (!data.username && !data.password) return tip('请完善表单')
           if (data.username.length < 2 || data.username.length > 30)
             return tip('用户名长度需在2-30字符')
@@ -143,6 +144,7 @@
               url: 'login',
               data,
             })
+            // 登录成功在本地保存登陆信息
             sessionStorage.setItem('information',JSON.stringify(res.data))
             location.href = './index.html'
           } catch (err) {

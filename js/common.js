@@ -27,7 +27,9 @@ axios.defaults.baseURL = 'http://ajax-api.itheima.net'
 axios.interceptors.request.use(
   function (config) {
     // 每次都发送请求头
-    config.headers.Authorization = sessionStorage.getItem('token')
+    config.headers.Authorization = JSON.parse(
+      sessionStorage.getItem('information')
+    ).token
     return config
   },
   function (error) {
@@ -43,10 +45,17 @@ axios.interceptors.response.use(
   function (error) {
     // token失效清除数据并退出登录
     if (error.response.status === 401) {
-      sessionStorage.removeItem('token')
-      sessionStorage.removeItem('username')
+      sessionStorage.removeItem('information')
       location.href = './login.html'
     }
     return Promise.reject(error)
   }
 )
+
+// 退出登录功能
+const logout = document.getElementById('logout')
+if (logout)
+  logout.addEventListener('click', () => {
+    sessionStorage.removeItem('information')
+    location.href = './login.html'
+  })
