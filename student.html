@@ -392,6 +392,167 @@
     <script src="./lib/axios.js"></script>
     <script src="./lib/form-serialize.js"></script>
     <script src="./js/common.js"></script>
-    <script></script>
+    <script>
+      // 学生列表渲染
+      async function renderList() {
+        const res = await axios({
+          url: '/students',
+        })
+        console.log(res)
+        document.querySelector('b.total').innerHTML = res.data.length
+        document.querySelector('tbody.list').innerHTML = res.data
+          .map(
+            (item) => `
+          <tr>
+            <td>${item.name}</td>
+            <td>${item.age}</td>
+            <td>${item.gender ? '女' : '男'}</td>
+            <td>${item.group}</td>
+            <td>${item.hope_salary}</td>
+            <td>${item.salary}</td>
+            <td>${item.province + item.city + item.area}</td>
+            <td data-id="${item.id}">
+              <a href="javascript:;" class="text-success mr-3"><i class="bi bi-pen"></i></a>
+              <a href="javascript:;" class="text-danger"><i class="bi bi-trash"></i></a>
+            </td>
+          </tr>
+        `
+          )
+          .join('')
+      }
+      renderList()
+      // 添加与编辑模态框
+      let modal = new bootstrap.Modal(document.getElementById('modal'))
+      renderProvince()
+      // 编辑与删除
+      document
+        .querySelector('tbody.list')
+        .addEventListener('click', async (e) => {
+          if (e.target.classList.contains('bi-trash')) {
+            try {
+              await axios({
+                method: 'DELETE',
+                url: `/students/${e.target.parentNode.parentNode.dataset.id}`,
+              })
+              alert('删除成功')
+              renderList()
+            } catch (err) {
+              alert('删除失败')
+            }
+          } else if (e.target.classList.contains('bi-pen')) {
+            const res = await axios({
+              url: `/students/${e.target.parentNode.parentNode.dataset.id}`,
+            })
+            const ipt = document.createElement('input')
+            ipt.type = 'hidden'
+            ipt.value = res.data.id
+            document.getElementById('form').appendChild(ipt)
+            renderCity(res.data.province)
+            renderArea(res.data.province, res.data.city)
+            for (let k in res.data) {
+              if (k === 'gender') {
+                document.querySelector(
+                  `[name="gender"][value="${res.data[k]}"]`
+                ).checked = true
+              } else if (document.querySelector(`[name="${k}"]`)) {
+                document.querySelector(`[name="${k}"]`).value = res.data[k]
+              }
+            }
+            document.querySelector('#modal h5').innerHTML = '编辑学员'
+            modal.show()
+          }
+        })
+      // 打开添加框
+      document.getElementById('openModal').addEventListener('click', () => {
+        renderProvince()
+        document.getElementById('form').reset()
+        document.querySelector('#modal h5').innerHTML = '添加学员'
+        modal.show()
+      })
+      // 编辑与添加提交
+      document.getElementById('submit').addEventListener('click', async () => {
+        const data = serialize(document.getElementById('form'), { hash: true })
+        console.log(data)
+        data.age = +data.age
+        data.gender = +data.gender
+        data.group = +data.group
+        data.hope_salary = +data.hope_salary
+        data.salary = +data.salary
+        if (data.age < 10 || data.age > 90 || data.age == NaN)
+          return alert('年龄请输入10-90')
+        if (data.group < 1 || data.group > 8 || data.group == NaN)
+          return alert('组号请输入1-8')
+        if (data.hope_salary == NaN || data.salary == NaN)
+          return alert('薪资请输入数字')
+        if (document.querySelector('#modal h5').innerHTML == '添加学员') {
+          try {
+            await axios({
+              method: 'POST',
+              url: '/students',
+              data,
+            })
+            alert('添加成功')
+            renderList()
+            modal.hide()
+          } catch (err) {
+            alert('添加失败')
+          }
+        } else {
+          try {
+            await axios({
+              method: 'PUT',
+              url: `/students/${document.querySelector('[type=hidden]').value}`,
+              data,
+            })
+            alert('修改成功')
+            renderList()
+            modal.hide()
+          } catch (err) {
+            alert('修改失败')
+          }
+        }
+      })
+      // 省市区
+      const ps = document.querySelector('[name="province"]')
+      const cs = document.querySelector('[name="city"]')
+      const as = document.querySelector('[name="area"]')
+      // 联动
+      ps.addEventListener('change', () => {
+        renderCity(ps.value)
+      })
+      cs.addEventListener('change', () => {
+        renderArea(ps.value, cs.value)
+      })
+      // 省
+      async function renderProvince() {
+        const res = await axios({
+          url: '/api/province',
+        })
+        ps.innerHTML = res.data
+          .map((item) => `<option>${item}</option>`)
+          .join('')
+        renderCity(ps.value)
+      }
+      async function renderCity(pname) {
+        const res = await axios({
+          url: '/api/city',
+          params: { pname },
+        })
+        cs.innerHTML = res.data
+          .map((item) => `<option>${item}</option>`)
+          .join('')
+        renderArea(ps.value, cs.value)
+      }
+      async function renderArea(pname, cname) {
+        if (cname == '海外') return (as.innerHTML = '')
+        const res = await axios({
+          url: '/api/area',
+          params: { pname, cname },
+        })
+        as.innerHTML = res.data
+          .map((item) => `<option>${item}</option>`)
+          .join('')
+      }
+    </script>
   </body>
 </html>
