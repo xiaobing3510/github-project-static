@@ -474,17 +474,16 @@
       document.getElementById('submit').addEventListener('click', async () => {
         const data = serialize(document.getElementById('form'), { hash: true })
         console.log(data)
+        if (!(data.age > 10 || data.age < 90)) return alert('年龄请输入10-90')
+        if (!(data.group > 1 || data.group < 8)) return alert('组号请输入1-8')
+        if (/\D/g.test(data.hope_salary) || /\D/g.test(data.salary))
+          return alert('薪资请输入数字')
         data.age = +data.age
         data.gender = +data.gender
         data.group = +data.group
         data.hope_salary = +data.hope_salary
         data.salary = +data.salary
-        if (data.age < 10 || data.age > 90 || data.age == NaN)
-          return alert('年龄请输入10-90')
-        if (data.group < 1 || data.group > 8 || data.group == NaN)
-          return alert('组号请输入1-8')
-        if (data.hope_salary == NaN || data.salary == NaN)
-          return alert('薪资请输入数字')
+
         if (document.querySelector('#modal h5').innerHTML == '添加学员') {
           try {
             await axios({
