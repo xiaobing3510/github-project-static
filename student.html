@@ -447,8 +447,9 @@
             ipt.type = 'hidden'
             ipt.value = res.data.id
             document.getElementById('form').appendChild(ipt)
-            renderCity(res.data.province)
-            renderArea(res.data.province, res.data.city)
+            console.log(res.data.province, res.data.city)
+            await renderCity(res.data.province)
+            await renderArea(res.data.province, res.data.city)
             for (let k in res.data) {
               if (k === 'gender') {
                 document.querySelector(
@@ -534,24 +535,28 @@
         renderCity(ps.value)
       }
       async function renderCity(pname) {
-        const res = await axios({
-          url: '/api/city',
-          params: { pname },
-        })
-        cs.innerHTML = res.data
-          .map((item) => `<option>${item}</option>`)
-          .join('')
-        renderArea(ps.value, cs.value)
+        try {
+          const res = await axios({
+            url: '/api/city',
+            params: { pname },
+          })
+          cs.innerHTML = res.data
+            .map((item) => `<option>${item}</option>`)
+            .join('')
+          renderArea(ps.value, cs.value)
+        } catch (err) {}
       }
       async function renderArea(pname, cname) {
         if (cname == '海外') return (as.innerHTML = '')
-        const res = await axios({
-          url: '/api/area',
-          params: { pname, cname },
-        })
-        as.innerHTML = res.data
-          .map((item) => `<option>${item}</option>`)
-          .join('')
+        try {
+          const res = await axios({
+            url: '/api/area',
+            params: { pname, cname },
+          })
+          as.innerHTML = res.data
+            .map((item) => `<option>${item}</option>`)
+            .join('')
+        } catch (err) {}
       }
     </script>
   </body>
