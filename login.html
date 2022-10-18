@@ -146,8 +146,10 @@
               url: 'login',
               data,
             })
+            console.log(res)
             // 登录成功在本地保存登陆信息
-            sessionStorage.setItem('information', JSON.stringify(res.data))
+            sessionStorage.setItem('username', res.data.username)
+            sessionStorage.setItem('token', res.data.token)
             location.href = './index.html'
           } catch (err) {
             tip(err.response.data.message)

@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="./css/common.css" />
     <link rel="stylesheet" href="./css/index.css" />
     <script>
-      const information = JSON.parse(sessionStorage.getItem('information'))
+      const information = sessionStorage.getItem('token')
       // 没有登录信息就无法访问已登录页面
       if (!information) location.href = './login.html'
     </script>
