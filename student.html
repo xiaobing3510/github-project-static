@@ -546,7 +546,7 @@
         } catch (err) {}
       }
       async function renderArea(pname, cname) {
-        if (cname == '海外') return (as.innerHTML = '')
+        if (cname == '海外') return (as.innerHTML = `<option>海外</option>`)
         try {
           const res = await axios({
             url: '/api/area',
