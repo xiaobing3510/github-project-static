@@ -62,7 +62,6 @@ if (logout)
     })
 const username = document.querySelector('.mb-0.text-sm.font-weight-bold')
 if (username) {
-    username.innerHTML = JSON.parse(
-        sessionStorage.getItem('information')
-    ).username
+    username.innerHTML = sessionStorage.getItem('username')
+
 }
